@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import {Text, View } from "react-native";
+import {Text, View, StyleSheet } from "react-native";
 
 
-export function CurrencyAPI (fromValue: string) {
+export default function CurrencyAPI () {
     const [currencyData, setCurrencyData] = useState(null)
   useEffect(() => {
     async function fetchCurrency() {
@@ -12,9 +12,9 @@ export function CurrencyAPI (fromValue: string) {
           "x-api-key": "85f7ccfd-677a-4e5a-a5eb-21c19734edf7",
         },
       });
-      response = await response.json();
-      console.log(response);
-      setCurrencyData(response);
+      let data = await response.json();
+      console.log(data);
+      setCurrencyData(data);
     }
     fetchCurrency();
   }, []);
@@ -23,8 +23,7 @@ export function CurrencyAPI (fromValue: string) {
     <View>
       {currencyData ? (
         <View>
-          <Text>Currency Data</Text>
-          <Text>Exchange Rate: {currencyData.data}</Text>
+          <Text style={styles.exchangeText}>{currencyData.AUD.symbol} {currencyData.AUD.rate} = {currencyData.EUR.symbol} {currencyData.EUR.rate}</Text>
         </View>
       ) : (
         <Text>Loading the Currency...</Text>
@@ -32,3 +31,22 @@ export function CurrencyAPI (fromValue: string) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    padding: 20,
+    margin: 10,
+  },
+  textInput: {
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: "red",
+  },
+  exchangeText: {
+    fontSize: 20,
+    fontWeight: 500,
+    textAlign: 'center',
+    padding: 15
+  },
+});

@@ -2,8 +2,8 @@ import * as React from "react";
 import Svg, { Mask, Path, G, Rect, Defs, ClipPath } from "react-native-svg";
 export const SwapFrom = (props: any) => (
   <Svg
-    width={80}
-    height={80}
+    width={100}
+    height={100}
     viewBox="0 0 80 80"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

@@ -18,9 +18,6 @@ function Result({result, rate, into, from, amount}: ResultProps) {
 
   return (
     <View>
-        !isNaN(result) &&
-        !isNaN(rate) && (
-          <View>
             <View>
               {amount} {fromField}{" "}
               <View/>
@@ -33,8 +30,6 @@ function Result({result, rate, into, from, amount}: ResultProps) {
               Rate={rate}{" "}
               <View/>
             </View>
-            </View>
-        )
     </View>
   );
 }
