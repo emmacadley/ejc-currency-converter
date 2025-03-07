@@ -1,9 +1,23 @@
 import { useEffect, useState } from "react";
 import {Text, View, StyleSheet } from "react-native";
-
-
+type Currency = {
+  rate: number;
+  name: string;
+  symbol:string;}
+type RatesPerGBP = {
+  EUR: Currency,
+  USD: Currency,
+  CAD: Currency,
+  JPY: Currency,
+  NZD: Currency,
+  THB: Currency,
+  CNY: Currency,
+  AUD: Currency,
+  CHF: Currency,
+  ZAR: Currency,
+}
 export default function CurrencyAPI () {
-    const [currencyData, setCurrencyData] = useState(null)
+    const [currencyData, setCurrencyData] = useState<RatesPerGBP | null>(null)
   useEffect(() => {
     async function fetchCurrency() {
       let response = await fetch("http://192.168.68.185:8000/rates/gbp", {
@@ -18,6 +32,7 @@ export default function CurrencyAPI () {
     }
     fetchCurrency();
   }, []);
+
 
   return (
     <View>

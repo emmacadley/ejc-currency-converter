@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, StyleSheet, Button, NativeSyntheticEvent, TextInputChangeEventData, TouchableOpacity } from "react-native";
-import Result from "./Result";
 import { CurrencyPicker } from "./currencyPicker";
 import CurrencyAPI from "./CurrencyAPI";
 
+
 const CurrencyConverter: React.FC = () => {
-  const [from, setFrom] = useState<string>("GBP");
-  const [into, setInto] = useState<string>("USD");
+  const [from, setFrom] = useState<string>("");
+  const [into, setInto] = useState<string>("");
   const [amount, setAmount] = useState<number>(1);
   const [currencyResult, setCurrencyResult] = useState<string>("");
-  const [currencyRate, setCurrencyRate] = useState<string>("");
   const [amountValue, setAmountValue] = useState<number>(1);
   const [currencyData, setCurrencyData] = useState(null);
   
@@ -36,8 +35,7 @@ const CurrencyConverter: React.FC = () => {
       typeof amount === "string" ? parseFloat(amount) : amount;
 
     if (amountValue === 0 || isNaN(amountValue) || amountValue < 0) {
-      setCurrencyResult("");
-      setCurrencyRate("");
+      setCurrencyResult("no result");
       return;
     }
 
@@ -48,7 +46,6 @@ const CurrencyConverter: React.FC = () => {
       if (currencyData && Object.keys(currencyData).includes(fromValue)) {
         const currencyRate = currencyData[fromValue].rate;
         const currencyResult = amountValue * currencyRate;
-        setCurrencyRate(currencyRate.toFixed(2));
         setCurrencyResult(currencyResult.toFixed(2));
         setAmountValue(amountValue/* .toString() */);
       } else {
@@ -68,8 +65,8 @@ const CurrencyConverter: React.FC = () => {
   }, [from, into, amount]);
 
   const handleInput = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    const { value } = e.nativeEvent.target;
-    setAmount(value);
+    const { text } = e.nativeEvent;
+    setAmount(parseFloat(text));
   };
 
   const handleFrom = (selectedOption: any) => {
@@ -93,14 +90,13 @@ const CurrencyConverter: React.FC = () => {
             <CurrencyPicker 
             handleChange={handleFrom}
             placeholder="Select a currency (From)"
-            currencyValue={from}
-            currencyData={currencyData}
+            //currencyValue={from}
             >
             </CurrencyPicker>
           </View>
           <TextInput
             placeholder="Enter Amount"
-            value={String(amount)}
+            value={amount}
             onChange={handleInput}
             style={styles.textInput}
           />
@@ -117,21 +113,14 @@ const CurrencyConverter: React.FC = () => {
              <CurrencyPicker 
             handleChange={handleInto}
             placeholder="Select a currency (To)"
-            currencyValue={into}
-            currencyData={currencyData}
+            //currencyValue={into}
+            //currencyData={currencyData}
             >
             </CurrencyPicker>
           </View>
-          <View style={styles.spacer}/>
           <View>
             <TextInput style={styles.textInput} editable={false}>
-            <Result
-              result={parseFloat(currencyResult)}
-              rate={parseFloat(currencyRate)}
-              into={into}
-              from={from}
-              amount={amountValue}
-            />
+                <Text>Result = {currencyResult}</Text>
             </TextInput>
           </View>
         </View>
