@@ -1,79 +1,16 @@
-
-import {
-  Text,
-  View,
-  TextInput,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
-import {
-  SwapFrom,
-  AED,
-  AUD,
-  CAD,
-  CHF,
-  CNY,
-  EUR,
-  GBP,
-  JPY,
-  NZD,
-  THB,
-  USD,
-  ZAR,
-} from "@/images/ImageLibrary";
-import { SadDropdown } from "./Dropdown";
-import Dropdowns from "./dropDowns";
-import CurrencyAPI from "./CurrencyAPI";
+import {StyleSheet, ScrollView, SafeAreaView, Text, View } from "react-native";
+import {SwapFrom} from "@/images/ImageLibrary";
 import CurrencyConverter from "./convertCurrency";
 
 export default function Index() {
   return (
     <SafeAreaView>
       <ScrollView>
-      <CurrencyAPI />
-        {/* <CurrencyConverter /> */}
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <View style={styles.mainContainer}>
-            <Text>Source amount</Text>
-            <TextInput style={styles.textInput} />
-            <Text>Select Source Currency</Text>
-           {/*  <RNPickerSelect
-            onValueChange={(selectedValue) => console.log(selectedValue)}
-            items={currencyData.map(currency => ({
-              label: currency,
-              value: currency
-            }))}
-            /> */}
-          </View>
-          <View style={styles.mainContainer}>
-            <Text>Target amount</Text>
-            <TextInput style={styles.textInput} editable={false} />
-            <Text>Select Target Currency</Text>
-            <TextInput style={styles.textInput} />
-          </View>
-          <View>
-            <SwapFrom />
-            <AED />
-            <AUD />
-            <CAD />
-            <CHF />
-            <CNY />
-            <EUR />
-            <GBP />
-            <JPY />
-            <NZD />
-            <THB />
-            <USD />
-            <ZAR />
-          </View>
-          <SadDropdown />
+        <View style={styles.mainContainer}>
+      <SwapFrom style={{alignSelf: 'center'}}/>
+      <Text style={styles.title}> Swap from </Text>
+      <View style={styles.spacer}/>
+        <CurrencyConverter />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -82,13 +19,24 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   mainContainer: {
+    flex: 1,
     padding: 20,
-    height: 200,
-    backgroundColor: "#fff",
+    margin: 10,
   },
   textInput: {
     marginBottom: 10,
     borderWidth: 2,
     borderColor: "red",
   },
+  title: {
+    fontSize: 20,
+    fontWeight: 500,
+    textAlign: 'center',
+    padding: 15
+  },
+  spacer: {
+    padding: 5,
+    height: 5
+  }
+
 });

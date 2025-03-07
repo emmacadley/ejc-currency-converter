@@ -1,17 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, StyleSheet, Button } from "react-native";
-//import axios from "axios";
-import Result from "./Result";
-import Dropdowns from "./dropDowns";
+import { View, Text, TextInput, StyleSheet, Button, NativeSyntheticEvent, TextInputChangeEventData, TouchableOpacity } from "react-native";
+import { CurrencyPicker } from "./currencyPicker";
+import CurrencyAPI from "./CurrencyAPI";
+
 
 const CurrencyConverter: React.FC = () => {
-  const [from, setFrom] = useState<string>("GBP");
-  const [into, setInto] = useState<string>("USD");
+  const [from, setFrom] = useState<string>("");
+  const [into, setInto] = useState<string>("");
   const [amount, setAmount] = useState<number>(1);
   const [currencyResult, setCurrencyResult] = useState<string>("");
-  const [currencyRate, setCurrencyRate] = useState<string>("");
-  const [amountValue, setAmountValue] = useState<string>("");
+  const [amountValue, setAmountValue] = useState<number>(1);
+  const [currencyData, setCurrencyData] = useState(null);
   
+  useEffect(() => {
+    async function fetchCurrency() {
+      let response = await fetch("http://192.168.68.185:8000/rates/gbp", {
+        method: "GET",
+        headers: {
+          "x-api-key": "85f7ccfd-677a-4e5a-a5eb-21c19734edf7",
+        },
+      });
+      let data = await response.json();
+      console.log(data);
+      setCurrencyData(data);
+    }
+    fetchCurrency();
+  }, []);
   const convertCurrency = async (
     from: string,
     into: string,
@@ -21,39 +35,19 @@ const CurrencyConverter: React.FC = () => {
       typeof amount === "string" ? parseFloat(amount) : amount;
 
     if (amountValue === 0 || isNaN(amountValue) || amountValue < 0) {
-      setCurrencyResult("");
-      setCurrencyRate("");
+      setCurrencyResult("no result");
       return;
     }
-    const [currencyData, setCurrencyData] = useState("GBP");
-    useEffect(() => {
-        async function fetchCurrency() {
-          let response = await fetch("http://192.168.68.185:8000/rates/gbp", {
-            method: "GET",
-            headers: {
-              "x-api-key": "85f7ccfd-677a-4e5a-a5eb-21c19734edf7",
-            },
-          });
-          response = await response.json();
-          console.log(response);
-          setCurrencyData(response);
-        }
-        fetchCurrency();
-      }, []);
 
-    const fromValue = from.split(" ")[0].trim();
-    const intoValue = into.split(" ")[0].trim().toUpperCase();
-    //const url = convertCurrency(fromValue);
+      const fromValue = from.split(" ")[0].trim();
+      const intoValue = into.split(" ")[0].trim().toUpperCase();
     
     try {
-        const currencyResponse = setCurrencyData(fromValue)
-      const parsedData = currencyResponse.data;
-      if (intoValue in parsedData.conversion_rates) {
-        const currencyRate = parsedData.conversion_rates[intoValue];
+      if (currencyData && Object.keys(currencyData).includes(fromValue)) {
+        const currencyRate = currencyData[fromValue].rate;
         const currencyResult = amountValue * currencyRate;
-        setCurrencyRate(currencyRate.toFixed(2));
         setCurrencyResult(currencyResult.toFixed(2));
-        setAmountValue(amountValue.toString());
+        setAmountValue(amountValue/* .toString() */);
       } else {
         console.error("Error while converting currency: Invalid data");
       }
@@ -70,9 +64,9 @@ const CurrencyConverter: React.FC = () => {
     }
   }, [from, into, amount]);
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setAmount(parseFloat(value));
+  const handleInput = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+    const { text } = e.nativeEvent;
+    setAmount(parseFloat(text));
   };
 
   const handleFrom = (selectedOption: any) => {
@@ -92,37 +86,42 @@ const CurrencyConverter: React.FC = () => {
     <View>
       <View>
         <View>
+          <View>
+            <CurrencyPicker 
+            handleChange={handleFrom}
+            placeholder="Select a currency (From)"
+            //currencyValue={from}
+            >
+            </CurrencyPicker>
+          </View>
           <TextInput
             placeholder="Enter Amount"
             value={amount}
             onChange={handleInput}
             style={styles.textInput}
           />
+          <View style={styles.spacer1}/>
           <View>
-            <Dropdowns
-              handleChange={handleFrom}
-              placeholder="Select a currency (From)"
-              value={from}
-            ></Dropdowns>
+            <TouchableOpacity style={styles.button} onPress={handleSwitch}>
+                <Text style={styles.buttonText}>Convert</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.title}> to </Text>
+          <CurrencyAPI />
+          <View style={styles.spacer2}/>
+          <View>
+             <CurrencyPicker 
+            handleChange={handleInto}
+            placeholder="Select a currency (To)"
+            //currencyValue={into}
+            //currencyData={currencyData}
+            >
+            </CurrencyPicker>
           </View>
           <View>
-            <Button title="convert-button" onClick={handleSwitch} />
-          </View>
-          <View>
-            <Dropdowns
-              handleChange={handleInto}
-              placeholder="Select a currency (To)"
-              value={into}
-            ></Dropdowns>
-          </View>
-          <View>
-            <Result
-              result={parseFloat(currencyResult)}
-              rate={parseFloat(currencyRate)}
-              into={into}
-              from={from}
-              amount={parseFloat(amountValue)}
-            />
+            <TextInput style={styles.textInput} editable={false}>
+                <Text>Result = {currencyResult}</Text>
+            </TextInput>
           </View>
         </View>
       </View>
@@ -138,9 +137,43 @@ const styles = StyleSheet.create({
   },
   textInput: {
     marginBottom: 10,
-    borderWidth: 2,
-    borderColor: "red",
+    marginTop: 30,
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    height: 60,
+    fontSize: 20,
+    padding: 15
   },
+  title: {
+    fontSize: 20,
+    fontWeight: 500,
+    textAlign: 'center',
+    padding: 15
+  },
+  spacer1: {
+    padding: 15,
+    height: 20
+  },
+  spacer2: {
+    padding: 12,
+    height: 20
+  },
+button: {
+    borderRadius: 8,
+    backgroundColor: "#FF808B",
+    flex: 0.3,
+    padding: 10,
+    borderColor: "#E40046",
+    borderWidth: 2,
+    height: 60,
+},
+buttonText: {
+    fontSize: 25,
+    fontWeight: 400,
+    textAlign: 'center',
+}
 });
 
 export default CurrencyConverter;
