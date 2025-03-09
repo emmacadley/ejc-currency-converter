@@ -23,3 +23,4 @@ Server data provided by: https://github.com/stuartmcvean/ExchangeRateTestData
 
 - Project repo contains folder of stages of work in progress.
 - These files are not to be used but have remained to provide context and reference to the stages of building the converter.
+<img width="406" alt="Screenshot 2025-03-09 at 21 14 34" src="https://github.com/user-attachments/assets/38e778ce-1935-4324-9c15-121b150027aa" />
