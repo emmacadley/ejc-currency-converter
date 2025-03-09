@@ -1,18 +1,16 @@
-import {StyleSheet, ScrollView, SafeAreaView, Text, View } from "react-native";
-import {SwapFrom} from "@/images/ImageLibrary";
-import CurrencyConverter from "./convertCurrency";
+import { StyleSheet, SafeAreaView, Text, View } from "react-native";
+import { SwapFrom } from "@/images/ImageLibrary";
+import { Converter } from "./Converter";
 
 export default function Index() {
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <View style={styles.mainContainer}>
-      <SwapFrom style={{alignSelf: 'center'}}/>
-      <Text style={styles.title}> Swap from </Text>
-      <View style={styles.spacer}/>
-        <CurrencyConverter />
-        </View>
-      </ScrollView>
+    <SafeAreaView style={styles.mainContainer}>
+      <View>
+        <SwapFrom style={{ alignSelf: "center" }} />
+        <Text style={styles.title}> Swap from </Text>
+        <View style={styles.spacer} />
+        <Converter />
+      </View>
     </SafeAreaView>
   );
 }
@@ -23,20 +21,14 @@ const styles = StyleSheet.create({
     padding: 20,
     margin: 10,
   },
-  textInput: {
-    marginBottom: 10,
-    borderWidth: 2,
-    borderColor: "red",
-  },
   title: {
     fontSize: 20,
     fontWeight: 500,
-    textAlign: 'center',
-    padding: 15
+    textAlign: "center",
+    padding: 15,
   },
   spacer: {
     padding: 5,
-    height: 5
-  }
-
+    height: 5,
+  },
 });
