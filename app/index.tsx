@@ -1,14 +1,15 @@
 import { StyleSheet, SafeAreaView, Text, View } from "react-native";
-import { SwapFrom } from "@/images/ImageLibrary";
+import { ConverterLogo } from "@/images/ImageLibrary";
 import { Converter } from "./Converter";
 
 export default function Index() {
   return (
     <SafeAreaView style={styles.mainContainer}>
       <View>
-        <SwapFrom style={{ alignSelf: "center" }} />
+        <View style={styles.logoContainer}>
+          <ConverterLogo width={120} height={80} />
+        </View>
         <Text style={styles.title}> Swap from </Text>
-        <View style={styles.spacer} />
         <Converter />
       </View>
     </SafeAreaView>
@@ -20,15 +21,18 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     margin: 10,
+    backgroundColor: "#F1F7E6"
   },
   title: {
-    fontSize: 20,
+    fontSize: 25,
     fontWeight: 500,
     textAlign: "center",
-    padding: 15,
+    padding: 35,
   },
-  spacer: {
-    padding: 5,
-    height: 5,
+  logoContainer: {
+    flex: 1,
+    padding: 30,
+    marginBottom: 50,
+    alignItems: "center",
   },
 });
