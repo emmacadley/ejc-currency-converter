@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
+  ViewPropsIOS,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import {
@@ -77,11 +78,13 @@ export const Converter = () => {
   const [currencyData, setCurrencyData] = useState<CurrencyData | null>(null);
   const [amountToConvert, setAmountToConvert] = useState<string>("");
   const [convertedValue, setConvertedValue] = useState<string>("");
+  const [fromSymbol, setFromSymbol] = useState<string>("£");
+  const [toSymbol, setToSymbol] = useState<string>("$");
 
   useEffect(() => {
     async function fetchCurrency() {
       const response = await fetch(
-        `http://192.168.0.15:8000/rates/${fromPickerValue}`,
+        `http://192.168.64.43:8000/rates/${fromPickerValue}`,
         {
           method: "GET",
           headers: {
@@ -96,45 +99,69 @@ export const Converter = () => {
     fetchCurrency();
   }, [fromPickerValue]);
 
+  useEffect(() => {
+    if (fromPickerValue && currencyData) {
+      const fromCurrencyLabel = fromPickerValue.toUpperCase();
+      setFromSymbol(currencyData[fromCurrencyLabel].symbol);
+    }
+  }, [fromPickerValue]);
+  useEffect(() => {
+    if (toPickerValue && currencyData) {
+      const toCurrencyLabel = toPickerValue.toUpperCase();
+      setToSymbol(currencyData[toCurrencyLabel].symbol);
+    }
+  }, [toPickerValue]);
+
   const handleConversion = () => {
     if (fromPickerValue && toPickerValue && amountToConvert && currencyData) {
       const currencyLabel = toPickerValue.toUpperCase();
       const conversionRate = currencyData[currencyLabel].rate;
       const convertedAmount = parseFloat(amountToConvert) * conversionRate;
-      
+
       setConvertedValue(convertedAmount.toFixed(2).toString());
     }
   };
 
   return (
     <>
-      <View>
+      <View style={styles.mainContainer}>
         <CurrencyPicker
           items={initialItems}
           value={fromPickerValue}
           onSetPickerValue={setFromPickerValue}
         />
-        <TextInput
-          placeholder="Enter Amount to Convert"
-          value={amountToConvert}
-          onChangeText={(textAmount) => setAmountToConvert(textAmount)}
-          style={styles.textInput}
-        />
-        <View style={styles.spacer1} />
-        <View>
+
+        <View style={styles.textInputBox}>
+          <Text style={styles.symbolText}>{fromSymbol}</Text>
+          <TextInput
+            placeholder="Enter Amount to Convert"
+            value={amountToConvert}
+            onChangeText={(textAmount) => setAmountToConvert(textAmount)}
+            style={styles.textInputText}
+          />
+        </View>
+
+        <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={handleConversion}>
             <Text style={styles.buttonText}>Convert</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.spacer1} />
+
         <CurrencyPicker
           items={initialItems}
           value={toPickerValue}
           onSetPickerValue={setToPickerValue}
         />
+
         <View>
-          <TextInput style={styles.textInput} editable={false} placeholder= "Converted Amount">
-            <Text>{convertedValue}</Text>
+          <TextInput
+            style={styles.textInputBox}
+            editable={false}
+            placeholder="Converted Amount"
+          >
+            <Text style={styles.symbolText}>
+              {toSymbol} {convertedValue}
+            </Text>
           </TextInput>
         </View>
       </View>
@@ -145,41 +172,43 @@ export const Converter = () => {
 const styles = StyleSheet.create({
   mainContainer: {
     padding: 20,
-    height: 200,
-    backgroundColor: "#fff",
+    backgroundColor: "#E6F3D9",
   },
-  textInput: {
-    marginBottom: 10,
-    marginTop: 30,
+  textInputBox: {
+    marginBottom: 20,
+    marginTop: 20,
     borderWidth: 1,
     borderColor: "black",
     borderRadius: 8,
     backgroundColor: "#fff",
     height: 60,
+    paddingLeft: 10,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  symbolText: {
     fontSize: 20,
-    padding: 15,
+    textAlign: "left",
   },
-  spacer1: {
-    padding: 10,
-    height: 50,
+  textInputText: {
+    fontSize: 20,
+    paddingLeft: 10,
+    flex: 1,
   },
-  spacer2: {
-    padding: 12,
-    height: 20,
+  buttonContainer: {
+    marginTop: 10,
+    marginBottom: 20,
   },
   button: {
     borderRadius: 8,
-    backgroundColor: "#FF808B",
-    flex: 0.3,
-    padding: 10,
-    borderColor: "#E40046",
     borderWidth: 2,
-    height: 10,
+    backgroundColor: "#D0F0C0",
+    borderColor: "#7BB163",
+    padding: 15,
   },
   buttonText: {
-    fontSize: 25,
-    fontWeight: 400,
+    fontSize: 20,
+    fontWeight: "bold",
     textAlign: "center",
   },
-
 });
